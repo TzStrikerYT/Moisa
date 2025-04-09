@@ -40,3 +40,51 @@ sr.reveal('.section__data',{origin: 'left',distance: '70px'});
 
 /*Imgs*/
 sr.reveal('.section__img',{origin: 'left',distance: '90px',delay: 200}); 
+
+// Audio Control
+const audioControl = document.getElementById('audioControl');
+const backgroundAudio = document.getElementById('backgroundAudio');
+const audioMessage = document.querySelector('.audio-message');
+let isPlaying = false;
+
+// Intentar reproducir automáticamente
+const playAudio = () => {
+    const playPromise = backgroundAudio.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            // La reproducción automática funcionó
+            isPlaying = true;
+            audioControl.innerHTML = '<i class="bx bx-pause"></i>';
+            audioMessage.style.display = 'none'; // Ocultar el mensaje
+        })
+        .catch(() => {
+            // La reproducción automática falló
+            audioMessage.style.display = 'block'; // Mostrar el mensaje
+        });
+    }
+};
+
+// Intentar reproducir cuando la página se carga
+document.addEventListener('DOMContentLoaded', playAudio);
+
+// También intentar reproducir cuando el usuario interactúa con la página
+document.addEventListener('click', () => {
+    if (!isPlaying) {
+        playAudio();
+    }
+});
+
+// Control manual del audio
+audioControl.addEventListener('click', () => {
+    if (isPlaying) {
+        backgroundAudio.pause();
+        audioControl.innerHTML = '<i class="bx bx-play"></i>';
+        audioMessage.style.display = 'block'; // Mostrar el mensaje al pausar
+    } else {
+        backgroundAudio.play();
+        audioControl.innerHTML = '<i class="bx bx-pause"></i>';
+        audioMessage.style.display = 'none'; // Ocultar el mensaje al reproducir
+    }
+    isPlaying = !isPlaying;
+});
