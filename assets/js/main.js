@@ -47,44 +47,38 @@ const backgroundAudio = document.getElementById('backgroundAudio');
 const audioMessage = document.querySelector('.audio-message');
 let isPlaying = false;
 
-// Intentar reproducir automáticamente
-const playAudio = () => {
-    const playPromise = backgroundAudio.play();
-    
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            // La reproducción automática funcionó
-            isPlaying = true;
-            audioControl.innerHTML = '<i class="bx bx-pause"></i>';
-            audioMessage.style.display = 'none'; // Ocultar el mensaje
-        })
-        .catch(() => {
-            // La reproducción automática falló
-            audioMessage.style.display = 'block'; // Mostrar el mensaje
-        });
-    }
-};
-
-// Intentar reproducir cuando la página se carga
-document.addEventListener('DOMContentLoaded', playAudio);
-
-// También intentar reproducir cuando el usuario interactúa con la página
-document.addEventListener('click', () => {
-    if (!isPlaying) {
-        playAudio();
-    }
-});
-
 // Control manual del audio
 audioControl.addEventListener('click', () => {
     if (isPlaying) {
         backgroundAudio.pause();
         audioControl.innerHTML = '<i class="bx bx-play"></i>';
-        audioMessage.style.display = 'block'; // Mostrar el mensaje al pausar
+        audioMessage.style.display = 'block';
+        audioControl.classList.remove('playing');
+        isPlaying = false;
     } else {
         backgroundAudio.play();
         audioControl.innerHTML = '<i class="bx bx-pause"></i>';
-        audioMessage.style.display = 'none'; // Ocultar el mensaje al reproducir
+        audioMessage.style.display = 'none';
+        audioControl.classList.add('playing');
+        isPlaying = true;
     }
-    isPlaying = !isPlaying;
+});
+
+// Intentar reproducir cuando la página se carga
+document.addEventListener('DOMContentLoaded', () => {
+    const playPromise = backgroundAudio.play();
+    
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            isPlaying = true;
+            audioControl.innerHTML = '<i class="bx bx-pause"></i>';
+            audioMessage.style.display = 'none';
+            audioControl.classList.add('playing');
+        })
+        .catch(() => {
+            isPlaying = false;
+            audioMessage.style.display = 'block';
+            audioControl.classList.remove('playing');
+        });
+    }
 });
